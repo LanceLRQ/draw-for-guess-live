@@ -1,0 +1,14 @@
+.sketching-board {
+  .draw-wrapper {
+    position: relative;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+  }
+  .control-bar {
+    padding: $width-2 $width-1;
+    background: $white;
+    border-bottom-left-radius: $width-2;
+    border-right: 1px solid $grey-4;
+    height: $width-9;
+  }
+}

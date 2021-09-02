@@ -1,0 +1,10 @@
+.custom-icon {
+  width: 24px;
+  height: 24px;
+  fill: rgba(0, 0, 0, 0.54);
+}
+.MuiIconButton-colorPrimary {
+  .custom-icon-svg-eraser {
+    fill: #3f51b5;
+  }
+}

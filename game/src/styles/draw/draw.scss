@@ -1,0 +1,50 @@
+.app-draw-and-guess-loading {
+  width: $width-16;
+  margin: $width-8 auto;
+  text-align: center;
+}
+
+
+.app-draw-and-guess-game {
+  display: flex;
+  flex-direction: row;
+  width: 1280px;
+  margin: $width-4 auto;
+  background: $white;
+  border: 1px solid $grey-4;
+  box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.25);
+  border-bottom-left-radius: $width-2;
+  border-bottom-right-radius: $width-2;
+
+  .sketch-layout {
+    width: 960px;
+  }
+  .chat-layout {
+    width: 320px;
+    display: flex;
+    flex-direction: column;
+    .chat-list {
+      flex: 1 1 auto;
+      padding: $width-2;
+      border-bottom: 1px solid $grey-4;
+    }
+    .input-area {
+      padding: $width-2;
+      height: $width-16;
+      flex: 0 0 $width-9;
+    }
+  }
+}
+
+.ant-modal {
+  .avatar-picker {
+    display: flex;
+    flex-wrap: wrap;
+    .avatar-picker-item {
+      margin: $width-1 1px;
+      width: 80px;
+      height: 80px;
+      cursor: pointer;
+    }
+  }
+}

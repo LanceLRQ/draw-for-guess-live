@@ -1,0 +1,14 @@
+html, body {
+    height: 100%;
+    overflow: hidden;
+}
+#root { height:  100%; }
+.website-main-layout {
+    height: 100%;
+}
+.website-content-layout {
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+@import "./custom-icons";

@@ -1,0 +1,7 @@
+.idea/**
+.vscode/**
+public/**
+*.ts
+*.tsx
+webpack.config.*.js
+*.DS_Store

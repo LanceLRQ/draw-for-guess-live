@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <base href="/" />
+    <meta charset="UTF-8">
+    <!-- 这个是设置Chrome或Safari的移动端顶栏的颜色 -->
+    <!--    <meta name="theme-color" content="#389e0d" />-->
+    <!--    <meta name="msapplication-navbutton-color" content="#389e0d">-->
+    <!--    <meta name="apple-mobile-web-app-capable" content="yes">-->
+    <!--    <meta name="apple-mobile-web-app-status-bar-style" content="black">-->
+    <!--    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">-->
+    <!--    <link rel="bookmark" href="/favicon.ico" type="image/x-icon" />-->
+    <title><%= htmlWebpackPlugin.options.website.title %></title>
+    <meta http-equiv="X-UA-Compatible" content="ie=edge,Chrome=1" />
+    <meta name="description" content="<%= htmlWebpackPlugin.options.website.description %>" />
+    <meta name="keywords" content="<%= htmlWebpackPlugin.options.website.keywords %>" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no" />
+    <% for (var css in htmlWebpackPlugin.files.css) { %>
+    <link href="<%=htmlWebpackPlugin.files.css[css] %>" rel="stylesheet">
+    <% } %>
+    <!-- SSR:store -->
+</head>
+<body>
+<div id="root"><!-- SSR:root --></div>
+<% for (var key in htmlWebpackPlugin.files.js) { %>
+<script type="text/javascript" src="<%= htmlWebpackPlugin.files.js[key] %>"></script>
+<% } %>
+</body>
+</html>

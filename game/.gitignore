@@ -1,0 +1,11 @@
+# nodejs
+node_modules/
+# Webstorm Config
+.idea/
+# MacOS
+.DS_Store
+# Dist HTML
+dist/
+!dist/index.html
+# cache
+.cache/
