@@ -2,8 +2,8 @@ package server
 
 import (
 	"github.com/kataras/iris/v12"
-	"draw-for-guess-live/internal/data"
-	"draw-for-guess-live/internal/errors"
+	"launcher/internal/data"
+	"launcher/internal/errors"
 )
 
 func SendRESTSuccessResult(ctx iris.Context, content interface{}) {

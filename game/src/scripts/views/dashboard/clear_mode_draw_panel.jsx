@@ -1,6 +1,7 @@
 import '@/styles/draw/sketching-board.scss';
 import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
+import { noop } from 'lodash';
 import {
   Button, Row, Col, Slider, Space
 } from 'antd';
@@ -9,8 +10,10 @@ import { ClearModeDrawLogic } from '../logic/clear_mode_draw';
 
 let drawBoard = null;
 
-export const ClearModeDrawPanel= (props) => {
-  const { width, height, targetImage } = props;
+export const ClearModeDrawPanel = (props) => {
+  const {
+    width, height, targetImage, onInit, onDestroy, onChange, readonly,
+  } = props;
   const canvasRef = useRef();
   const pencilRef = useRef();
   const [pencilWidth, setPencilWidth] = useState(31);
@@ -19,20 +22,14 @@ export const ClearModeDrawPanel= (props) => {
 
   useEffect(() => {
     if (canvasRef.current) {
-      // gameClient = new GameClient();
-      // gameClient.Connect('ws://localhost:8975/api/game').then(res => {
-      //
-      // });
-      // window.game = gameClient;
-
       drawBoard = new ClearModeDrawLogic(canvasRef.current, pencilRef.current);
       drawBoard.onChange = (msg) => {
-        console.log(JSON.stringify(msg));
+        onChange(JSON.stringify(msg));
       };
-      drawBoard.readonly = false;
+      drawBoard.readonly = readonly;
       drawBoard.init();
       // drawBoard.reset();
-      window.drawBoard = drawBoard;
+      // window.drawBoard = drawBoard;
       drawBoard.setPencilStyle(pencilWidth);
 
       const img = new Image();
@@ -40,14 +37,17 @@ export const ClearModeDrawPanel= (props) => {
       img.onload = () => {
         setTargetImg(targetImage);
       };
+
+      onInit(drawBoard);  // 向父级组件暴露组件
     }
     return () => {
       if (drawBoard) {
         drawBoard.destory();
         drawBoard = null;
+        onDestroy();
       }
     };
-  }, []);
+  }, [targetImage, readonly]);
 
   useEffect(() => {
     if (drawBoard) {
@@ -104,10 +104,18 @@ export const ClearModeDrawPanel= (props) => {
 ClearModeDrawPanel.propTypes = {
   width: PropTypes.number,
   height: PropTypes.number,
+  readonly: PropTypes.bool,
   targetImage: PropTypes.string.isRequired,
+  onInit: PropTypes.func,
+  onDestroy: PropTypes.func,
+  onChange: PropTypes.func,
 };
 
 ClearModeDrawPanel.defaultProps = {
   width: 960,
   height: 540,
+  readonly: false,
+  onInit: noop,
+  onDestroy: noop,
+  onChange: noop,
 };

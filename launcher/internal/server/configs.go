@@ -3,7 +3,7 @@ package server
 import (
 	"fmt"
 	"gopkg.in/yaml.v2"
-	"draw-for-guess-live/internal/data"
+	"launcher/internal/data"
 	"io/ioutil"
 )
 

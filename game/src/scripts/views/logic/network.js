@@ -1,11 +1,12 @@
+import { noop } from 'lodash';
 import NeffosJS from 'neffos.js';
 
-class GameClient {
+export class GameClient {
   server = null;
 
   client = null;
 
-  room = null;
+  handleDrawAction = noop;
 
   async Connect(url) {
     try {
@@ -21,8 +22,9 @@ class GameClient {
           _OnNamespaceDisconnect: () => {
             console.log('[WS] 服务器连接已断开');
           },
-          chat: (nsConn, msg) => { // "chat" event.
-            console.log(msg.Body);
+          draw: (nsConn, msg) => { // "draw" event.
+            // console.log(msg.Body);
+            this.handleDrawAction(msg.Body, msg);
           },
         },
       }, { // optional.
@@ -33,16 +35,9 @@ class GameClient {
         },
       });
       this.client = await this.server.connect('drawing');
+      // this.client.send
     } catch (e) {
       console.error(`[WS] 连接游戏服务器出现错误：${e}`);
-    }
-  }
-
-  async join() {
-    try {
-      this.room = await this.client.joinRoom('123');
-    } catch (e) {
-      console.error(`[WS] 加入房间失败：${e.message}`);
     }
   }
 }

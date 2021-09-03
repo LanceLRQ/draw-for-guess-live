@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/urfave/cli/v2"
-	"draw-for-guess-live/internal"
+	"launcher/internal"
 	"log"
 	"os"
 )

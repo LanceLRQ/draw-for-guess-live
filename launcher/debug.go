@@ -1,12 +1,12 @@
 package main
 
 import (
-	"draw-for-guess-live/internal"
+	"launcher/internal"
 	"log"
 )
 
 func main()  {
-	err := internal.RunServer("./configs/server.yml", "")
+	err := internal.RunServer("./config.yml", "")
 	if err != nil {
 		log.Fatal(err)
 	}

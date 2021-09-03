@@ -5,8 +5,8 @@ import (
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/middleware/logger"
 	"github.com/kataras/iris/v12/middleware/recover"
-	"draw-for-guess-live/internal/server"
-	"draw-for-guess-live/internal/views"
+	"launcher/internal/server"
+	"launcher/internal/views"
 )
 
 func runHttpServer() error {

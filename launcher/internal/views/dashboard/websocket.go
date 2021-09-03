@@ -1,7 +1,6 @@
-package game
+package dashboard
 
 import (
-	"fmt"
 	gorilla "github.com/gorilla/websocket"
 	"github.com/kataras/iris/v12/websocket"
 	"github.com/kataras/neffos"
@@ -10,14 +9,17 @@ import (
 	"net/http"
 )
 
+//var MessageBoardcastChannel chan *neffos.Message
+
 func newGameWebsocketView() *neffos.Server {
+	//MessageBoardcastChannel = make(chan *neffos.Message)
 	ws := websocket.New(neffosGorilla.Upgrader(gorilla.Upgrader{
 		CheckOrigin: func(r *http.Request) bool { return true },
 	}), websocket.Namespaces{
 		"drawing": neffos.Events{
-			"chat": func(c *neffos.NSConn, msg neffos.Message) error {
-				body := string(msg.Body)
-				fmt.Println("receive:"  + body + "; name space:" + msg.Namespace + ";room: " + msg.Room)
+			"draw": func(c *neffos.NSConn, msg neffos.Message) error {
+				//body := string(msg.Body)
+				//fmt.Println("receive:"  + body + "; name space:" + msg.Namespace + ";room: " + msg.Room)
 				if !c.Conn.IsClient() {
 					c.Conn.Server().Broadcast(c, msg)
 					//c.Room("123").NSConn.Conn.Server().Broadcast(c, msg)

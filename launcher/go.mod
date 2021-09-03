@@ -1,4 +1,4 @@
-module draw-for-guess-live
+module launcher
 
 go 1.16
 
