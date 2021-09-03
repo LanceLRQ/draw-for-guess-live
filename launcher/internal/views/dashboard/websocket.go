@@ -9,7 +9,7 @@ import (
 	"net/http"
 )
 
-//var MessageBoardcastChannel chan *neffos.Message
+var MessageBoardcastChannel chan *neffos.Message
 
 func redirectOnlyHandler(c *neffos.NSConn, msg neffos.Message) error {
 	if !c.Conn.IsClient() {
@@ -19,7 +19,7 @@ func redirectOnlyHandler(c *neffos.NSConn, msg neffos.Message) error {
 }
 
 func newGameWebsocketView() *neffos.Server {
-	//MessageBoardcastChannel = make(chan *neffos.Message)
+	MessageBoardcastChannel = make(chan *neffos.Message)
 	ws := websocket.New(neffosGorilla.Upgrader(gorilla.Upgrader{
 		CheckOrigin: func(r *http.Request) bool { return true },
 	}), websocket.Namespaces{
@@ -40,6 +40,16 @@ func newGameWebsocketView() *neffos.Server {
 	ws.OnDisconnect = func(c *websocket.Conn) {
 		log.Printf("[%s] Disconnected from server", c.ID())
 	}
+
+	//go func() {
+	//	select {
+	//		case msg := <- MessageBoardcastChannel:
+	//			//ws.Broadcast(fmt.Stringer)
+	//	default:
+	//
+	//	}
+	//}()
+
 	return ws
 }
 
