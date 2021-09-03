@@ -1,0 +1,10 @@
+server:
+  listen: 127.0.0.1
+  port: 8460
+  session_salt: guest460
+
+redis:
+  host: 127.0.0.1
+  port: 6379
+  password: 12345678
+  db: 1
