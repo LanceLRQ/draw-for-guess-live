@@ -29,6 +29,12 @@ export const SketchView = () => {
         onChange={(msg) => {
           gameClient?.client.emit('draw', msg);
         }}
+        onReset={() => {
+          gameClient?.client.emit('clear');
+        }}
+        onUndo={() => {
+          gameClient?.client.emit('undo');
+        }}
         targetImage={CatImg}
       />
     </div>

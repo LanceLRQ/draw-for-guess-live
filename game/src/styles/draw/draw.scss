@@ -16,6 +16,10 @@
   border-bottom-left-radius: $width-2;
   border-bottom-right-radius: $width-2;
 
+  &.live-board {
+    width: 960px !important;
+  }
+
   .sketch-layout {
     width: 960px;
   }

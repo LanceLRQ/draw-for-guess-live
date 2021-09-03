@@ -7,6 +7,8 @@ export class GameClient {
   client = null;
 
   handleDrawAction = noop;
+  handleClearAction = noop;
+  handleUndoAction = noop;
 
   async Connect(url) {
     try {
@@ -22,9 +24,14 @@ export class GameClient {
           _OnNamespaceDisconnect: () => {
             console.log('[WS] 服务器连接已断开');
           },
-          draw: (nsConn, msg) => { // "draw" event.
-            // console.log(msg.Body);
+          draw: (nsConn, msg) => {
             this.handleDrawAction(msg.Body, msg);
+          },
+          clear: (nsConn, msg) => {
+            this.handleClearAction(msg.Body, msg);
+          },
+          undo: (nsConn, msg) => {
+            this.handleUndoAction(msg.Body, msg);
           },
         },
       }, { // optional.

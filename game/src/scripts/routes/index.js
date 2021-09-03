@@ -22,8 +22,8 @@ export const routes = [
             path: '/dashboard/sketch',
             exact: true,
             component: Views.Dashboard.SketchView,   // 画板页面
-          },
-        ]
+          }
+        ],
       },
       {
         path: '/draw',

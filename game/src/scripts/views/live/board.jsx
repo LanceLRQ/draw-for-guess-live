@@ -12,10 +12,16 @@ export const LiveBoardView = () => {
     gameClient.handleDrawAction = (msg) => {
       drawBoard?.command(JSON.parse(msg));
     };
+    gameClient.handleUndoAction = () => {
+      drawBoard?.undo();
+    };
+    gameClient.handleClearAction = () => {
+      drawBoard?.reset();
+    };
     gameClient.Connect('ws://localhost:8975/api/dashboard/service').then(() => {});
     window.game = gameClient;
   }, []);
-  return <div className="app-draw-and-guess-game">
+  return <div className="app-draw-and-guess-game live-board">
     <ClearModeDrawPanel
       readonly
       width={960}

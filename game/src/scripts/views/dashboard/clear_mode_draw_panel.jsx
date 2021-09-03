@@ -12,7 +12,8 @@ let drawBoard = null;
 
 export const ClearModeDrawPanel = (props) => {
   const {
-    width, height, targetImage, onInit, onDestroy, onChange, readonly,
+    width, height, targetImage, onInit, onDestroy, onChange,
+    readonly, onUndo, onReset,
   } = props;
   const canvasRef = useRef();
   const pencilRef = useRef();
@@ -80,7 +81,7 @@ export const ClearModeDrawPanel = (props) => {
         />
       </span>
     </div>
-    <Row className="control-bar">
+    {!readonly && <Row className="control-bar">
       <Col span={4}>
         <Slider
           value={pencilWidth}
@@ -93,11 +94,27 @@ export const ClearModeDrawPanel = (props) => {
       <Col span={16} />
       <Col span={4} style={{ textAlign: 'right' }}>
         <Space>
-          <Button type="default" shape="circle" icon={<UndoOutlined />} onClick={() => drawBoard.undo()} />
-          <Button type="danger" shape="circle" icon={<DeleteOutlined />} onClick={() => drawBoard.reset()} />
+          <Button
+            type="default"
+            shape="circle"
+            icon={<UndoOutlined />}
+            onClick={() => {
+              drawBoard.undo();
+              onUndo();
+            }}
+          />
+          <Button
+            type="danger"
+            shape="circle"
+            icon={<DeleteOutlined />}
+            onClick={() => {
+              drawBoard.reset();
+              onReset();
+            }}
+          />
         </Space>
       </Col>
-    </Row>
+    </Row>}
   </div>;
 };
 
@@ -109,6 +126,8 @@ ClearModeDrawPanel.propTypes = {
   onInit: PropTypes.func,
   onDestroy: PropTypes.func,
   onChange: PropTypes.func,
+  onReset: PropTypes.func,
+  onUndo: PropTypes.func,
 };
 
 ClearModeDrawPanel.defaultProps = {
@@ -118,4 +137,6 @@ ClearModeDrawPanel.defaultProps = {
   onInit: noop,
   onDestroy: noop,
   onChange: noop,
+  onUndo: noop,
+  onReset: noop,
 };

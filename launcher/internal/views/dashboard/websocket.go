@@ -11,21 +11,22 @@ import (
 
 //var MessageBoardcastChannel chan *neffos.Message
 
+func redirectOnlyHandler(c *neffos.NSConn, msg neffos.Message) error {
+	if !c.Conn.IsClient() {
+		c.Conn.Server().Broadcast(c, msg)
+	}
+	return nil
+}
+
 func newGameWebsocketView() *neffos.Server {
 	//MessageBoardcastChannel = make(chan *neffos.Message)
 	ws := websocket.New(neffosGorilla.Upgrader(gorilla.Upgrader{
 		CheckOrigin: func(r *http.Request) bool { return true },
 	}), websocket.Namespaces{
 		"drawing": neffos.Events{
-			"draw": func(c *neffos.NSConn, msg neffos.Message) error {
-				//body := string(msg.Body)
-				//fmt.Println("receive:"  + body + "; name space:" + msg.Namespace + ";room: " + msg.Room)
-				if !c.Conn.IsClient() {
-					c.Conn.Server().Broadcast(c, msg)
-					//c.Room("123").NSConn.Conn.Server().Broadcast(c, msg)
-				}
-				return nil
-			},
+			"draw": redirectOnlyHandler,
+			"clear": redirectOnlyHandler,
+			"undo": redirectOnlyHandler,
 			"_OnRoomJoin": func(conn *neffos.NSConn, message neffos.Message) error {
 				return nil
 			},
