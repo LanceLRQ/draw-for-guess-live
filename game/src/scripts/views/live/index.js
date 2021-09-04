@@ -1,4 +1,1 @@
-import { LiveBoardView } from './board';
-export default {
-  LiveBoardView
-}
+export { LiveBoardView } from './board';

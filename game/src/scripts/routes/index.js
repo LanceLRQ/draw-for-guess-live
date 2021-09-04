@@ -26,7 +26,7 @@ export const routes = [
         ],
       },
       {
-        path: '/draw',
+        path: '/live',
         component: Views.Live.LiveBoardView,    // 画板页面
       }
     ],

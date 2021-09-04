@@ -5,6 +5,7 @@ import (
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/middleware/logger"
 	"github.com/kataras/iris/v12/middleware/recover"
+	"launcher/internal/biz"
 	"launcher/internal/server"
 	"launcher/internal/views"
 )
@@ -32,15 +33,12 @@ func runHttpServer() error {
 	return err
 }
 
-func parseListenAddress(address string) {
-
-}
-
 func RunServer (configFile string, address string) error {
 	// Load
 	err := server.LoadConfiguration(configFile)
 	if err != nil { return err }
-	parseListenAddress(address)
+	// 启动弹幕姬
+	go biz.InitDanmakuService()
 	// Run server
 	err = runHttpServer()
 	if err != nil { return err }

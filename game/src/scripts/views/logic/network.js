@@ -1,7 +1,7 @@
 import { noop } from 'lodash';
 import NeffosJS from 'neffos.js';
-import store from '../../store';
-import { pushDanmaku } from '../../store/sagas';
+import store from '@/scripts/store/index';
+import { pushDanmaku } from '@/scripts/store/sagas';
 
 export class GameClient {
   server = null;

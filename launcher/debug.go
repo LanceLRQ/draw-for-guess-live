@@ -2,12 +2,10 @@ package main
 
 import (
 	"launcher/internal"
-	"launcher/internal/biz"
 	"log"
 )
 
 func main()  {
-	go biz.InitDanmakuService()
 	err := internal.RunServer("./config.yml", "")
 	if err != nil {
 		log.Fatal(err)

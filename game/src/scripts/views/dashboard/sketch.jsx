@@ -1,7 +1,7 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import CatImg from '@/images/cat.jpg';
 import {
-  Button, Col, Input, Row
+  Button, Col, Input, Row, Menu
 } from 'antd';
 import { ClearModeDrawPanel } from './clear_mode_draw_panel';
 import { GameClient } from '../logic/network';
@@ -11,9 +11,10 @@ let gameClient = null;
 let drawBoard = null;
 
 export const SketchView = () => {
+  const [chatTabKey, setChatTabKey] = useState('global');
   useEffect(() => {
     gameClient = new GameClient();
-    gameClient.Connect('ws://localhost:8975/api/dashboard/service').then((res) => {});
+    gameClient.Connect('ws://localhost:8975/api/dashboard/service').then(() => {});
     window.game = gameClient;
     return () => {
       gameClient.Close();
@@ -43,18 +44,18 @@ export const SketchView = () => {
       />
     </div>
     <div className="chat-layout">
+      <div className="tab-layout">
+        <Menu
+          onSelect={({ key }) => { setChatTabKey(key); }}
+          selectedKeys={[chatTabKey]}
+          mode="horizontal"
+        >
+          <Menu.Item key="current">当前回合</Menu.Item>
+          <Menu.Item key="global">全局弹幕</Menu.Item>
+        </Menu>
+      </div>
       <div className="chat-list">
         <DanmakuList />
-      </div>
-      <div className="input-area">
-        <Row gutter={8}>
-          <Col flex={1}>
-            <Input />
-          </Col>
-          <Col flex={0}>
-            <Button type="primary">发送</Button>
-          </Col>
-        </Row>
       </div>
     </div>
   </div>;

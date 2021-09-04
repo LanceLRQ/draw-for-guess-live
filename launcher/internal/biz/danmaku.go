@@ -3,6 +3,7 @@ package biz
 import (
 	"fmt"
 	"github.com/kataras/neffos"
+	"launcher/internal/server"
 	"launcher/internal/utils"
 	"launcher/internal/utils/gobilibili"
 	"launcher/internal/views/dashboard"
@@ -11,11 +12,9 @@ import (
 
 
 var BilibiliClient *gobilibili.BiliBiliClient
-var BilibiliClientRoomId = 697
 
 func InitDanmakuService() {
 	for {
-		fmt.Println("Connecting...")
 		BilibiliClient = gobilibili.NewBiliBiliClient()
 		BilibiliClient.RegHandleFunc(gobilibili.CmdDanmuMsg, func(c *gobilibili.Context) bool {
 			info := c.GetDanmuInfo()
@@ -30,7 +29,7 @@ func InitDanmakuService() {
 			return false
 		})
 		// 传入房间号
-		err := BilibiliClient.ConnectServer(BilibiliClientRoomId)
+		err := BilibiliClient.ConnectServer(server.Config.Bilibili.RoomId)
 		if err != nil {
 			fmt.Printf("[danmaku] Error: %s\n", err.Error())
 		}
