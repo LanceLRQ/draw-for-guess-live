@@ -1,18 +1,21 @@
 import { combineReducers } from 'redux';
 import { handleActions } from 'redux-actions';
 
-export const TestReducer = handleActions({
-  SET_COUNTER: (state, { payload = {} }) => {
+export const DanmakuReducer = handleActions({
+  PUSH_DANMAKU: (state, { payload = {} }) => {
     return {
-      counter: payload.counter,
+      history: [...state.history, {
+        id: state.history + 1,
+        ...payload,
+      }],
     };
   },
 }, {
-  counter: 0,
+  history: [],
 });
 
 export const createRootReducer = () => {
   return combineReducers({
-    test: TestReducer,
+    danmaku: DanmakuReducer,
   });
 };

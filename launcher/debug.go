@@ -1,13 +1,17 @@
 package main
 
-import "launcher/internal/biz"
+import (
+	"launcher/internal"
+	"launcher/internal/biz"
+	"log"
+)
 
 func main()  {
-	//err := internal.RunServer("./config.yml", "")
-	//if err != nil {
-	//	log.Fatal(err)
-	//}
-	biz.InitDanmakuService()
+	go biz.InitDanmakuService()
+	err := internal.RunServer("./config.yml", "")
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 

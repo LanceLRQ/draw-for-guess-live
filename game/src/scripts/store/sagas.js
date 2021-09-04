@@ -1,22 +1,18 @@
 import { createActions } from 'redux-actions';
-import { put, takeEvery } from 'redux-saga/effects';
+// import { put, takeEvery } from 'redux-saga/effects';
 
-const {
-  setCounter,
+export const {
+  pushDanmaku,
   updateCounter,
 } = createActions({
-  SET_COUNTER: (payloads) => payloads,
+  PUSH_DANMAKU: (payloads) => payloads,
   UPDATE_COUNTER: (payloads) => payloads,
 });
 
-function* updateCounterSaga({ payload }) {
-  yield put(setCounter(payload));
-}
+// function* updateCounterSaga({ payload }) {
+//   yield put(setCounter(payload));
+// }
 
 export function* rootSaga() {
-  yield takeEvery([updateCounter], updateCounterSaga);
+  // yield takeEvery([updateCounter], updateCounterSaga);
 }
-
-export default {
-  updateCounter,
-};

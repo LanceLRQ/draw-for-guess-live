@@ -31,6 +31,8 @@
       flex: 1 1 auto;
       padding: $width-2;
       border-bottom: 1px solid $grey-4;
+      max-height: 540px;
+      overflow: auto;
     }
     .input-area {
       padding: $width-2;

@@ -5,6 +5,7 @@ import {
 } from 'antd';
 import { ClearModeDrawPanel } from './clear_mode_draw_panel';
 import { GameClient } from '../logic/network';
+import { DanmakuList } from './danmaku_list';
 
 let gameClient = null;
 let drawBoard = null;
@@ -14,6 +15,9 @@ export const SketchView = () => {
     gameClient = new GameClient();
     gameClient.Connect('ws://localhost:8975/api/dashboard/service').then((res) => {});
     window.game = gameClient;
+    return () => {
+      gameClient.Close();
+    };
   }, []);
   return <div className="app-draw-and-guess-game">
     <div className="sketch-layout">
@@ -39,7 +43,9 @@ export const SketchView = () => {
       />
     </div>
     <div className="chat-layout">
-      <div className="chat-list" />
+      <div className="chat-list">
+        <DanmakuList />
+      </div>
       <div className="input-area">
         <Row gutter={8}>
           <Col flex={1}>

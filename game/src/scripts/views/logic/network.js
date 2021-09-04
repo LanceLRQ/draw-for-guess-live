@@ -1,5 +1,7 @@
 import { noop } from 'lodash';
 import NeffosJS from 'neffos.js';
+import store from '../../store';
+import { pushDanmaku } from '../../store/sagas';
 
 export class GameClient {
   server = null;
@@ -7,7 +9,9 @@ export class GameClient {
   client = null;
 
   handleDrawAction = noop;
+
   handleClearAction = noop;
+
   handleUndoAction = noop;
 
   async Connect(url) {
@@ -33,6 +37,10 @@ export class GameClient {
           undo: (nsConn, msg) => {
             this.handleUndoAction(msg.Body, msg);
           },
+          danmaku: (nsConn, msgRaw) => {
+            const msg = JSON.parse(msgRaw.Body);
+            store.dispatch(pushDanmaku(msg));
+          },
         },
       }, { // optional.
         reconnect: 1000,
@@ -46,6 +54,13 @@ export class GameClient {
     } catch (e) {
       console.error(`[WS] 连接游戏服务器出现错误：${e}`);
     }
+  }
+
+  Close = () => {
+    this.client.disconnect();
+    this.client = null;
+    this.server.close();
+    this.server = null;
   }
 }
 
