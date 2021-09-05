@@ -3,4 +3,4 @@ server:
   port: 8975
 
 bilibili:
-  room_id: 1319
+  room_id: 102
