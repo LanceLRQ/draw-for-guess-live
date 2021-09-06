@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import CatImg from '@/images/cat.jpg';
 import {
-  Button, Col, Input, Row, Menu
+  Menu
 } from 'antd';
-import { ClearModeDrawPanel } from './clear_mode_draw_panel';
+import { EraserModeDrawPanel } from './components/eraser_mode';
 import { GameClient } from '../logic/network';
-import { DanmakuList } from './danmaku_list';
+import { DanmakuList } from './components/danmaku_list';
 
 let gameClient = null;
 let drawBoard = null;
@@ -22,7 +22,7 @@ export const SketchView = () => {
   }, []);
   return <div className="app-draw-and-guess-game">
     <div className="sketch-layout">
-      <ClearModeDrawPanel
+      <EraserModeDrawPanel
         width={960}
         height={540}
         onInit={(db) => {

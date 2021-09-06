@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import CatImg from '@/images/cat.jpg';
-import { ClearModeDrawPanel } from '../dashboard/clear_mode_draw_panel';
+import { EraserModeDrawPanel } from '../dashboard/components/eraser_mode';
 import { GameClient } from '../logic/network';
 
 let gameClient = null;
@@ -22,7 +22,7 @@ export const LiveBoardView = () => {
     window.game = gameClient;
   }, []);
   return <div className="app-draw-and-guess-game live-board">
-    <ClearModeDrawPanel
+    <EraserModeDrawPanel
       readonly
       width={960}
       height={540}

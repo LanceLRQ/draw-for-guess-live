@@ -3,7 +3,7 @@ import { DrawBoardPoint } from './structs/points';
 import { DrawBoardMessage } from './structs/message';
 import { DrawBoardPencilAction } from './structs/actions';
 
-export class ClearModeDrawLogic {
+export class EraserModeDrawLogic {
   // canvas dom
   canvas:HTMLCanvasElement = null
 

@@ -110,11 +110,10 @@ customAxios.interceptors.response.use((response) => {
   }
 });
 
-export const createApiClient = (appName = 'game', moduleName  = 'draw') => {
+export const createApiClient = () => {
   const { API_HOST = '' } = process.env;
   // 如果不设置baseURL，则自动mapping到默认的接口
-  console.log(API_HOST);
-  const baseURL = `${API_HOST}/${appName}/${moduleName}`;
+  const baseURL = API_HOST;
   return (options) => {
     const {
       ...requestOptions

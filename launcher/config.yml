@@ -1,6 +1,7 @@
 server:
   listen: 127.0.0.1
   port: 8975
+  store: ./store
 
 bilibili:
-  room_id: 102
+  room_id: 5426

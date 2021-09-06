@@ -6,11 +6,11 @@ import {
   Button, Row, Col, Slider, Space
 } from 'antd';
 import { UndoOutlined, DeleteOutlined } from '@ant-design/icons';
-import { ClearModeDrawLogic } from '../logic/clear_mode_draw';
+import { EraserModeDrawLogic } from '../../logic/clear_mode_draw';
 
 let drawBoard = null;
 
-export const ClearModeDrawPanel = (props) => {
+export const EraserModeDrawPanel = (props) => {
   const {
     width, height, targetImage, onInit, onDestroy, onChange,
     readonly, onUndo, onReset,
@@ -23,7 +23,7 @@ export const ClearModeDrawPanel = (props) => {
 
   useEffect(() => {
     if (canvasRef.current) {
-      drawBoard = new ClearModeDrawLogic(canvasRef.current, pencilRef.current);
+      drawBoard = new EraserModeDrawLogic(canvasRef.current, pencilRef.current);
       drawBoard.onChange = (msg) => {
         onChange(JSON.stringify(msg));
       };
@@ -118,7 +118,7 @@ export const ClearModeDrawPanel = (props) => {
   </div>;
 };
 
-ClearModeDrawPanel.propTypes = {
+EraserModeDrawPanel.propTypes = {
   width: PropTypes.number,
   height: PropTypes.number,
   readonly: PropTypes.bool,
@@ -130,7 +130,7 @@ ClearModeDrawPanel.propTypes = {
   onUndo: PropTypes.func,
 };
 
-ClearModeDrawPanel.defaultProps = {
+EraserModeDrawPanel.defaultProps = {
   width: 960,
   height: 540,
   readonly: false,

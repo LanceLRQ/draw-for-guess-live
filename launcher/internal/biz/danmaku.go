@@ -3,6 +3,7 @@ package biz
 import (
 	"fmt"
 	"github.com/kataras/neffos"
+	"launcher/internal/data"
 	"launcher/internal/server"
 	"launcher/internal/utils"
 	"launcher/internal/utils/gobilibili"
@@ -19,6 +20,8 @@ func InitDanmakuService() {
 		BilibiliClient.RegHandleFunc(gobilibili.CmdDanmuMsg, func(c *gobilibili.Context) bool {
 			info := c.GetDanmuInfo()
 			log.Printf("[%d]%d 说: %s\r\n", c.RoomID, info.UID, info.Text)
+			data.GameStatus.CurrentDanmaku = append([]gobilibili.DanmuInfo{info}, data.GameStatus.CurrentDanmaku...)
+			data.GameStatus.GlobalDanmaku = append(data.GameStatus.GlobalDanmaku, info)
 			if dashboard.DrawingWebSocketServer != nil {
 				dashboard.DrawingWebSocketServer.Broadcast(nil, neffos.Message{
 					Namespace: "drawing",

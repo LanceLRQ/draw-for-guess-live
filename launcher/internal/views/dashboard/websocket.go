@@ -5,17 +5,24 @@ import (
 	"github.com/kataras/iris/v12/websocket"
 	"github.com/kataras/neffos"
 	neffosGorilla "github.com/kataras/neffos/gorilla"
+	"launcher/internal/data"
 	"log"
 	"net/http"
 )
 
 var DrawingWebSocketServer *neffos.Server = nil
 
-func redirectOnlyHandler(c *neffos.NSConn, msg neffos.Message) error {
-	if !c.Conn.IsClient() {
-		c.Conn.Server().Broadcast(c, msg)
+func redirectOnlyHandler(actionType string) func (c *neffos.NSConn, msg neffos.Message) error {
+	return func(c *neffos.NSConn, msg neffos.Message) error {
+		if !c.Conn.IsClient() {
+			c.Conn.Server().Broadcast(c, msg)
+		}
+		data.GameStatus.DrawingHistory = append(data.GameStatus.DrawingHistory, data.DrawingOperation{
+			Type: actionType,
+			Msg: string(msg.Body),
+		})
+		return nil
 	}
-	return nil
 }
 
 func newGameWebsocketView() *neffos.Server {
@@ -23,9 +30,9 @@ func newGameWebsocketView() *neffos.Server {
 		CheckOrigin: func(r *http.Request) bool { return true },
 	}), websocket.Namespaces{
 		"drawing": neffos.Events{
-			"draw": redirectOnlyHandler,
-			"clear": redirectOnlyHandler,
-			"undo": redirectOnlyHandler,
+			"draw": redirectOnlyHandler("draw"),
+			"clear": redirectOnlyHandler("clear"),
+			"undo": redirectOnlyHandler("undo"),
 			"_OnRoomJoin": func(conn *neffos.NSConn, message neffos.Message) error {
 				return nil
 			},
