@@ -27,8 +27,8 @@ func SendRESTSuccessResultWithMessage(ctx iris.Context, content interface{}, mes
 
 func SendESTErrorResult (ctx iris.Context, err error) {
 	ctx.StatusCode(500)
-	// 类型断言：如果是Guess460CustomError，会试图读取具体错误信息
-	if pe, ok := err.(errors.Guess460CustomError); ok {
+	// 类型断言：如果是CustomError，会试图读取具体错误信息
+	if pe, ok := err.(errors.CustomError); ok {
 		ctx.JSON(&data.RESTResult{
 			Status: false,
 			ErrCode: pe.Code,

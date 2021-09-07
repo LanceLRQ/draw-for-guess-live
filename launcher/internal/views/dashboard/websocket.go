@@ -6,18 +6,19 @@ import (
 	"github.com/kataras/neffos"
 	neffosGorilla "github.com/kataras/neffos/gorilla"
 	"launcher/internal/data"
+	"launcher/internal/server"
 	"log"
 	"net/http"
 )
 
-var DrawingWebSocketServer *neffos.Server = nil
+
 
 func redirectOnlyHandler(actionType string) func (c *neffos.NSConn, msg neffos.Message) error {
 	return func(c *neffos.NSConn, msg neffos.Message) error {
 		if !c.Conn.IsClient() {
 			c.Conn.Server().Broadcast(c, msg)
 		}
-		data.GameStatus.DrawingHistory = append(data.GameStatus.DrawingHistory, data.DrawingOperation{
+		server.GameStatus.DrawingHistory = append(server.GameStatus.DrawingHistory, data.DrawingOperation{
 			Type: actionType,
 			Msg: string(msg.Body),
 		})
@@ -26,7 +27,7 @@ func redirectOnlyHandler(actionType string) func (c *neffos.NSConn, msg neffos.M
 }
 
 func newGameWebsocketView() *neffos.Server {
-	DrawingWebSocketServer = websocket.New(neffosGorilla.Upgrader(gorilla.Upgrader{
+	server.DrawingWebSocketServer = websocket.New(neffosGorilla.Upgrader(gorilla.Upgrader{
 		CheckOrigin: func(r *http.Request) bool { return true },
 	}), websocket.Namespaces{
 		"drawing": neffos.Events{
@@ -39,15 +40,15 @@ func newGameWebsocketView() *neffos.Server {
 		},
 	})
 
-	DrawingWebSocketServer.OnConnect = func(c *websocket.Conn) error {
+	server.DrawingWebSocketServer.OnConnect = func(c *websocket.Conn) error {
 		log.Printf("[%s] Connected to server!", c.ID())
 		return nil
 	}
-	DrawingWebSocketServer.OnDisconnect = func(c *websocket.Conn) {
+	server.DrawingWebSocketServer.OnDisconnect = func(c *websocket.Conn) {
 		log.Printf("[%s] Disconnected from server", c.ID())
 	}
 
-	return DrawingWebSocketServer
+	return server.DrawingWebSocketServer
 }
 
 /*

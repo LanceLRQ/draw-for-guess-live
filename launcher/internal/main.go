@@ -37,6 +37,8 @@ func RunServer (configFile string, address string) error {
 	// Load
 	err := server.LoadConfiguration(configFile)
 	if err != nil { return err }
+	// 载入谜题列表
+	biz.LoadRiddleList()
 	// 启动弹幕姬
 	go biz.InitDanmakuService()
 	// Run server
