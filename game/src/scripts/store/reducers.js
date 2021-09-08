@@ -64,9 +64,21 @@ export const GameStatusReducer = handleActions({
   drawing_history: [],
 });
 
+export const RiddleReducer = handleActions({
+  SAVE_RIDDLE_LIST: (state, { payload = [] }) => {
+    return {
+      ...state,
+      list: payload,
+    };
+  },
+}, {
+  list: [],
+});
+
 export const createRootReducer = () => {
   return combineReducers({
     danmaku: DanmakuReducer,
     game_status: GameStatusReducer,
+    riddles: RiddleReducer,
   });
 };

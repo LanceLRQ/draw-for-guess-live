@@ -11,5 +11,12 @@ export const API = {
       });
       return res.result;
     },
+    GetRiddleList: async (params) => {
+      const res = await RawAPIClient({
+        url: '/dashboard/riddle/list',
+        params,
+      });
+      return res.result;
+    },
   },
 };

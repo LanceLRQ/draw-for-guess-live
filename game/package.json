@@ -113,6 +113,7 @@
     "qs": "^6.10.1",
     "react": "^16.13.1",
     "react-color": "^2.19.3",
+    "react-cropper": "^2.1.8",
     "react-dom": "^16.13.1",
     "react-query": "^3.21.1",
     "react-redux": "^7.2.1",
