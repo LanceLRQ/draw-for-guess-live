@@ -18,5 +18,21 @@ export const API = {
       });
       return res.result;
     },
+    addRiddle: async (data) => {
+      const res = await RawAPIClient({
+        url: '/dashboard/riddle/add',
+        method: 'post',
+        data,
+      });
+      return res.result;
+    },
+    editRiddle: async (data) => {
+      const res = await RawAPIClient({
+        url: '/dashboard/riddle/edit',
+        method: 'post',
+        data,
+      });
+      return res.result;
+    },
   },
 };

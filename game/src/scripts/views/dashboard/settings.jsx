@@ -1,20 +1,25 @@
 import 'cropperjs/dist/cropper.css';
 import React, { useEffect, useState } from 'react';
 import {
-  PageHeader, Button, Modal, Form, Input, Select, Row, Col, Upload, message, Image
+  PageHeader, Button, Modal, Form, Input, Card,
+  Select, Row, Col, Upload, message, Image, Alert
 } from 'antd';
-import { useDispatch } from 'react-redux';
-import { InboxOutlined, DeleteOutlined } from '@ant-design/icons';
-import { getRiddleList } from '@/scripts/store/sagas';
+import { useDispatch, useSelector } from 'react-redux';
+import { InboxOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons';
+import { addRiddle, editRiddle, getRiddleList } from '@/scripts/store/sagas';
 import ReactCropper from 'react-cropper';
 
 export const SettingView = () => {
-  const [isShowEditDialog, setIsShowEditDialog] = useState(true);
+  const riddleList = useSelector((state) => state.riddles.list);
+
+  const [isShowEditDialog, setIsShowEditDialog] = useState(false);
   const [editorMode, setEditorMode] = useState('add');
   const [riddleType, setRiddleType] = useState(1);
   const [riddleKeywords, setRiddleKeywords] = useState('');
   const [riddleImages, setRiddleImages] = useState('');
   const [riddleImagesUrl, setRiddleImagesUrl] = useState('');
+  const [riddleConfirm, setRiddleConfirm] = useState(false);
+  const [riddleId, setRiddleId] = useState(0);
 
   const [isShowCropperDialog, setIsShowCropperDialog] = useState(false);
   const [imgForCropper, setImgForCropper] = useState('');
@@ -22,16 +27,28 @@ export const SettingView = () => {
   const [cropperConfirm, setCropperConfirm] = useState(false);
 
   const dispatch = useDispatch();
-  useEffect(() => {
+
+  const fetchRiddleList = () => {
     dispatch(getRiddleList());
-  }, []);
-  const showEditDialog = () => {
+  };
+
+  const addRiddleDialog = () => {
     setEditorMode('add');
     setRiddleType(1);
     setRiddleKeywords('');
     setIsShowEditDialog(true);
   };
-  const props = {
+
+  const editRiddleDialog = (item) => {
+    setEditorMode('edit');
+    setRiddleType(item.type);
+    setRiddleKeywords(item.keywords.join(','));
+    setRiddleImages(item.image);
+    setRiddleId(item.id);
+    setIsShowEditDialog(true);
+  };
+
+  const uploaderProps = {
     multiple: false,
     uploading: false,
     showUploadList: false,
@@ -53,9 +70,60 @@ export const SettingView = () => {
     },
   };
 
+  const submitRiddle = () => {
+    if (!riddleKeywords) {
+      message.error('请设置题目的关键词');
+      return;
+    }
+    if (riddleType === 1 && (!riddleImages && !riddleImagesUrl)) {
+      message.error('擦除模式请上传底图');
+      return;
+    }
+    const postData = {
+      type: riddleType,
+      keywords: riddleKeywords,
+    };
+    if (riddleType === 1) {
+      postData.images = riddleImages.replace(/data:image\/(\w+);base64,/, '');
+    }
+    setRiddleConfirm(true);
+    if (editorMode === 'add') {
+      dispatch(addRiddle({
+        data: postData,
+        onSuccess: () => {
+          message.success('添加成功！');
+          setIsShowEditDialog(false);
+          fetchRiddleList();
+        },
+        onError: (e) => {
+          message.error(e.message);
+        },
+        onCompleted: () => {
+          setRiddleConfirm(false);
+        },
+      }));
+    } else {
+      postData.id = riddleId;
+      dispatch(editRiddle({
+        data: postData,
+        onSuccess: () => {
+          message.success('编辑成功！');
+          setIsShowEditDialog(false);
+          fetchRiddleList();
+        },
+        onError: (e) => {
+          message.error(e.message);
+        },
+        onCompleted: () => {
+          setRiddleConfirm(false);
+        },
+      }));
+    }
+  };
+
   const ProcImages = () => {
     // 处理裁剪到的图片
-    return new Promise((resolve, reject) =>  {
+    return new Promise((resolve) =>  {
       const imgCropped = new window.Image();
       imgCropped.src = cropper.getCroppedCanvas().toDataURL('type/png', 1);
       imgCropped.onload = () => {
@@ -69,6 +137,10 @@ export const SettingView = () => {
     });
   };
 
+  useEffect(() => {
+    fetchRiddleList();
+  }, []);
+
   const renderCropper = () => {
     if (riddleImagesUrl || riddleImages) {
       return <div className="cropped-images-viewer">
@@ -76,15 +148,21 @@ export const SettingView = () => {
           <Image
             width={320}
             height={180}
-            src={riddleImagesUrl || riddleImages}
+            src={riddleImagesUrl ? `//${process.env.API_HOST}/${riddleImagesUrl}` : riddleImages}
           />
         </div>
-        <div className="delete-layout" onClick={() => setRiddleImages('')}>
+        <div
+          className="delete-layout"
+          onClick={() => {
+            setRiddleImages('');
+            setRiddleImagesUrl('');
+          }}
+        >
           <DeleteOutlined /> 删除
         </div>
       </div>;
     }
-    return <Upload.Dragger {...props}>
+    return <Upload.Dragger {...uploaderProps}>
       <p className="ant-upload-drag-icon">
         <InboxOutlined />
       </p>
@@ -97,15 +175,35 @@ export const SettingView = () => {
     <PageHeader
       title="题目设置"
       extra={[
-        <Button key="add" type="primary" onClick={showEditDialog}>添加新题目</Button>
+        <Button key="add" type="primary" onClick={addRiddleDialog}>添加新题目</Button>
       ]}
-    />;
+    />
+    {riddleList.map((item) => <Card
+      key={item.id}
+      style={{ width: 300 }}
+      cover={<img
+        alt="example"
+        src={`//${process.env.API_HOST}/${item.image}?m=${Math.random()}`}
+      />}
+      actions={[
+        <EditOutlined key="edit" onClick={() => editRiddleDialog(item)} />,
+        <DeleteOutlined key="delete" />
+      ]}
+    >
+      <Card.Meta
+        title={item.keywords.join(',')}
+        description={item.type === 1 ? '擦除模式' : '画笔模式'}
+      />
+    </Card>)}
+    
     <Modal
       title={editorMode === 'add' ? '新增题目' : '编辑题目'}
       width={896}
       maskClosable={false}
       visible={isShowEditDialog}
       onCancel={() => setIsShowEditDialog(false)}
+      onOk={submitRiddle}
+      confirmLoading={riddleConfirm}
     >
       <Row gutter={16}>
         <Col span={12}>
@@ -116,7 +214,7 @@ export const SettingView = () => {
           >
             <Form.Item label="题目类型">
               <Select value={riddleType} onChange={(item) => setRiddleType(item)}>
-                <Select.Option value={0}>画笔模式</Select.Option>
+                <Select.Option value={0} disabled>画笔模式</Select.Option>
                 <Select.Option value={1}>擦除模式</Select.Option>
               </Select>
             </Form.Item>
@@ -134,6 +232,7 @@ export const SettingView = () => {
         </Col>
       </Row>
     </Modal>
+
     <Modal
       title="编辑图片"
       width={960}
@@ -148,6 +247,12 @@ export const SettingView = () => {
         setIsShowCropperDialog(false);
       }}
     >
+      <Alert
+        message="小提示：双击灰色区域，可以切换为拖动后面的图，再次双击可以切回来；鼠标滚轮可以放大缩小图片。"
+        type="info"
+        showIcon
+        banner
+      />
       <ReactCropper
         style={{ height: 600, width: '100%' }}
         zoomTo={0.8}

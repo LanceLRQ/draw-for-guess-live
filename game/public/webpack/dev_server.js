@@ -63,6 +63,17 @@ export const buildWebpackDevServer = (host='0.0.0.0', port=3000) => {
           },
           pathRewrite: {'^/api': `http://localhost:8975/api`}
         },
+        '/store': {
+          target: 'http://localhost:8975',
+          changeOrigin: true,
+          secure: false,
+          logLevel: 'debug',
+          // 错误的时候在控制台输出内容
+          onError(err) {
+            console.log('Suppressing WDS proxy upgrade error:', err);
+          },
+          pathRewrite: {'^/store': `http://localhost:8975/store`}
+        },
         // '/api/ws': {
         //   target: 'wss://api.abc.com',
         //   changeOrigin: true,

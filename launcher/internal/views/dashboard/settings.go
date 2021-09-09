@@ -25,7 +25,7 @@ func GetRiddleList (ctx iris.Context) {
 func AddRiddleList (ctx iris.Context) {
 	keywordsText := ctx.PostValueDefault("keywords", "")
 	typeId := ctx.PostValueIntDefault("type", 1)
-	images := ctx.PostValueDefault("", "")
+	images := ctx.PostValueDefault("images", "")
 
 	if keywordsText == "" {
 		server.SendESTErrorResult(ctx, errors.EmptyKeywordsError)
@@ -56,7 +56,7 @@ func AddRiddleList (ctx iris.Context) {
 			return
 		}
 
-		err = ioutil.WriteFile(imgPath, imgBytes, 077)
+		err = ioutil.WriteFile(imgPath, imgBytes, 0777)
 		if err != nil {
 			server.SendESTErrorResult(ctx, errors.SaveImageError(err.Error()))
 			return
@@ -91,7 +91,7 @@ func EditRiddleList (ctx iris.Context) {
 
 	keywordsText := ctx.PostValueDefault("keywords", "")
 	typeId := ctx.PostValueIntDefault("type", 1)
-	images := ctx.PostValueDefault("", "")
+	images := ctx.PostValueDefault("images", "")
 
 	if keywordsText == "" {
 		server.SendESTErrorResult(ctx, errors.EmptyKeywordsError)
@@ -111,9 +111,9 @@ func EditRiddleList (ctx iris.Context) {
 		}
 
 		err = ioutil.WriteFile(
-			filepath.Join(),
+			filepath.Join(filepath.Join(server.Config.Server.Store, fmt.Sprintf("riddle_%d.png",id))),
 			imgBytes,
-			077,
+			0777,
 		)
 		if err != nil {
 			server.SendESTErrorResult(ctx, errors.SaveImageError(err.Error()))

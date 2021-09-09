@@ -11,6 +11,8 @@ export const {
   saveCurrentRiddle,
   getRiddleList,
   saveRiddleList,
+  addRiddle,
+  editRiddle,
 } = createActions({
   PUSH_DANMAKU: (payloads) => payloads,
   PUSH_DANMAKU_CURRENT: (payloads) => payloads,
@@ -19,6 +21,8 @@ export const {
   SAVE_CURRENT_RIDDLE: (payloads) => payloads,
   GET_RIDDLE_LIST: (payloads) => payloads,
   SAVE_RIDDLE_LIST: (payloads) => payloads,
+  ADD_RIDDLE: (payloads) => payloads,
+  EDIT_RIDDLE: (payloads) => payloads,
 });
 
 function* initGameStatusSaga() {
@@ -43,7 +47,31 @@ function* getRiddleListSaga() {
   }
 }
 
+function* addRiddleSaga({ payload }) {
+  try {
+    const resp = yield API.Dashboard.addRiddle(payload.data);
+    payload.onSuccess && payload.onSuccess(resp.data);
+  } catch (err) {
+    payload.onError && payload.onError(err);
+  } finally {
+    payload.onCompleted && payload.onCompleted();
+  }
+}
+
+function* editRiddleSaga({ payload }) {
+  try {
+    const resp = yield API.Dashboard.editRiddle(payload.data);
+    payload.onSuccess && payload.onSuccess(resp.data);
+  } catch (err) {
+    payload.onError && payload.onError(err);
+  } finally {
+    payload.onCompleted && payload.onCompleted();
+  }
+}
+
 export function* rootSaga() {
   yield takeEvery([initGameStatus], initGameStatusSaga);
   yield takeEvery([getRiddleList], getRiddleListSaga);
+  yield takeEvery([addRiddle], addRiddleSaga);
+  yield takeEvery([editRiddle], editRiddleSaga);
 }

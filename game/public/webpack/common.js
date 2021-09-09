@@ -32,7 +32,7 @@ export const buildWebpackBaseConfig = (entries, plugins, groups = {}, dev = true
         }),
         NODE_ENV: JSON.stringify(dev ? 'development' :'production'),
         SSR_MODE: JSON.stringify(ssr ? 'on' :'off'),
-        API_HOST: JSON.stringify( '//localhost:7988/api'),
+        API_HOST: JSON.stringify( dev ? 'localhost:7988' : 'localhost:8975'),
       }
     }),
   ];

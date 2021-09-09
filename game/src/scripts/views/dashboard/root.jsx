@@ -7,10 +7,8 @@ import React, { useEffect, useState } from 'react';
 import { withRouter } from 'react-router-dom';
 import { renderRoutes } from 'react-router-config';
 import { matchPath } from 'react-router';
-import {initGameStatus} from '@/scripts/store/sagas';
-import {useDispatch, useSelector} from 'react-redux';
-// import { useQuery } from 'react-query';
-// import { API } from '../logic/api';
+import { initGameStatus } from '@/scripts/store/sagas';
+import { useDispatch, useSelector } from 'react-redux';
 
 const { Header, Content, Footer } = Layout;
 

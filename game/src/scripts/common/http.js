@@ -110,10 +110,10 @@ customAxios.interceptors.response.use((response) => {
   }
 });
 
-export const createApiClient = () => {
+export const createApiClient = (path = '/api') => {
   const { API_HOST = '' } = process.env;
   // 如果不设置baseURL，则自动mapping到默认的接口
-  const baseURL = API_HOST;
+  const baseURL = `${window.location.protocol === 'http:' ? 'http:' : 'https:'}//${API_HOST}${path}`;
   return (options) => {
     const {
       ...requestOptions

@@ -14,7 +14,7 @@ export const SketchView = () => {
   const [chatTabKey, setChatTabKey] = useState('global');
   useEffect(() => {
     gameClient = new GameClient();
-    gameClient.Connect('ws://localhost:8975/api/dashboard/service').then(() => {});
+    gameClient.Connect(`${window.location.protocol === 'https:' ? 'wss' : 'ws'}://${process.env.API_HOST}/api/dashboard/service`).then(() => {});
     window.game = gameClient;
     return () => {
       gameClient.Close();
