@@ -57,3 +57,24 @@
     }
   }
 }
+
+
+.cropped-images-viewer {
+  display: flex;
+  flex-direction: row;
+  height: 180px;
+  border: 1px solid $grey-4;
+  .img-layout {
+    flex: 0;
+  }
+  .delete-layout {
+    line-height: 180px;
+    text-align: center;
+    cursor: pointer;
+    background: $grey-4;
+    flex: 1 1 auto;
+    &:hover {
+      background: $grey-6;
+    }
+  }
+}

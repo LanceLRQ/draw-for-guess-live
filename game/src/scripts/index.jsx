@@ -1,6 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { QueryClientProvider, QueryClient } from 'react-query'
+import { ConfigProvider } from 'antd';
+import zhCN from 'antd/lib/locale/zh_CN';
+import { QueryClientProvider, QueryClient } from 'react-query';
 import { BrowserRouter, StaticRouter } from 'react-router-dom';
 import { renderRoutes } from 'react-router-config';
 import { Provider } from 'react-redux';
@@ -13,13 +15,15 @@ const render = (routesConf) => {
   // SSR 的时候用ReactDOM.hydrate，平时开发在dev-server的时候用ReactDOM.render
   const renderer = module.hot ? ReactDOM.render : ReactDOM.hydrate;
   renderer(
-    <Provider store={store}>
-      <BrowserRouter>
-        <QueryClientProvider client={queryClient}>
-          {renderRoutes(routesConf)}
-        </QueryClientProvider>
-      </BrowserRouter>
-    </Provider>,
+    <ConfigProvider locale={zhCN}>
+      <Provider store={store}>
+        <BrowserRouter>
+          <QueryClientProvider client={queryClient}>
+            {renderRoutes(routesConf)}
+          </QueryClientProvider>
+        </BrowserRouter>
+      </Provider>
+    </ConfigProvider>,
     document.getElementById('root')
   );
 };

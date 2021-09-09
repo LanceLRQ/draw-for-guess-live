@@ -12,6 +12,7 @@ export const buildWebpackDevServer = (host='0.0.0.0', port=3000) => {
       //   cert: fs.readFileSync(path.resolve(paths.certs, 'server.crt')),
       //   ca: fs.readFileSync(path.resolve(paths.certs, 'ca.pem')),
       // },
+      clientLogLevel: 'none',
       port,
       host,
       // 热重载
