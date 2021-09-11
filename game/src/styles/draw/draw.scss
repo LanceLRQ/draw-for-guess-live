@@ -12,12 +12,27 @@
   margin: $width-4 auto;
   background: $white;
   border: 1px solid $grey-4;
-  box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.25);
+  box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.20);
   border-bottom-left-radius: $width-2;
   border-bottom-right-radius: $width-2;
 
   &.live-board {
     width: 960px !important;
+    .board-placeholder {
+      width: 960px;
+      height: 540px;
+      background: $blue-4;
+      color: white;
+      line-height: 540px;
+      font-size: $width-10;
+      text-align: center;
+      word-spacing: 1em;
+    }
+  }
+
+  .game-ready {
+    border-right: 1px solid $grey-4;
+    height: 100%;
   }
 
   .sketch-layout {
@@ -32,15 +47,50 @@
     }
     .chat-list {
       flex: 1 1 auto;
-      padding-bottom: $width-2;
-      border-bottom: 1px solid $grey-4;
       height: 540px;
       max-height: 540px;
       overflow: hidden;
     }
-    .danmaku-list {
+    .images-list {
+      flex: 1 1 auto;
       height: 100%;
-      overflow: auto;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      .list-content {
+        padding: $width-4;
+        flex: 1 1 auto;
+        overflow: auto;
+      }
+    }
+    .danmaku-layout {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      .danmaku-list {
+        flex: 1 1 60%;
+        overflow: auto;
+        &.full-height {
+          flex: 1 1 100%;
+        }
+      }
+      .answer-list {
+        flex: 0 0 40%;
+        overflow: auto;
+        box-shadow: -2px -2px 10px rgb(0 0 0 / 20%);
+      }
+    }
+
+  }
+}
+
+.app-draw-and-guess-settings {
+  .riddle-list-layout {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    .ant-card {
+      margin-left: $width-2;
     }
   }
 }

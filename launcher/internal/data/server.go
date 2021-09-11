@@ -13,6 +13,7 @@ type RiddleInfo struct {
 	Keywords []string `json:"keywords"` // 关键词，用于命中
 	Type     int    `json:"type"`    // 题目类型
 	Image    string `json:"image"`   // 图片文件位置
+	UpdateTime int `json:"update_time"`
 }
 
 type RiddleList []RiddleInfo // 谜题列表（倒序）
@@ -24,8 +25,8 @@ type RiddleListConfig struct {
 
 // 绘图状态
 type DrawingOperation struct {
-	Type string // 绘图操作事件类型
-	Msg  string // 消息的文本
+	Type string		`json:"type"` // 绘图操作事件类型
+	Msg  string 	`json:"msg"` // 消息的文本
 }
 
 // 服务器端用于记录游戏状态，不持久化。

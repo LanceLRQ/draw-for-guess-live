@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"launcher/internal/data"
 	"launcher/internal/utils/gobilibili"
+	"os"
 	"path/filepath"
 )
 
@@ -44,5 +45,19 @@ func LoadConfiguration(path string) error {
 	if err != nil {
 		Config.Server.Store = storePath
 	}
+	storeDir, err := os.Stat(storePath)
+	if err != nil {
+		if !os.IsExist(err) {
+			err = os.Mkdir(storePath, os.ModePerm)
+			return fmt.Errorf("create store dir error: %s", err.Error())
+		} else {
+			return fmt.Errorf("get store dir error: %s", err.Error())
+		}
+	} else {
+		if !storeDir.IsDir() {
+			return fmt.Errorf("store dir must be a directory: %s", err.Error())
+		}
+	}
+
 	return nil
 }

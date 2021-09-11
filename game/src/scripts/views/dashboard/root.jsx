@@ -7,7 +7,7 @@ import React, { useEffect, useState } from 'react';
 import { withRouter } from 'react-router-dom';
 import { renderRoutes } from 'react-router-config';
 import { matchPath } from 'react-router';
-import { initGameStatus } from '@/scripts/store/sagas';
+import { getRiddleList, initGameStatus } from '@/scripts/store/sagas';
 import { useDispatch, useSelector } from 'react-redux';
 
 const { Header, Content, Footer } = Layout;
@@ -42,6 +42,7 @@ export const RootView = withRouter((props) => {
   // console.log(gameStatus, status);
   useEffect(() => {
     dispatch(initGameStatus());
+    dispatch(getRiddleList());
   }, []);
   useEffect(() => {
     const rel = TabMenu.find((item) => {

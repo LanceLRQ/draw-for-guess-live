@@ -18,7 +18,7 @@ export const EraserModeDrawPanel = (props) => {
   const canvasRef = useRef();
   const pencilRef = useRef();
   const [pencilWidth, setPencilWidth] = useState(31);
-  const [cursorType, setCursorType] = useState('eraser');
+  // const [cursorType, setCursorType] = useState('eraser');
   const [targetImg, setTargetImg] = useState('');
 
   useEffect(() => {
@@ -56,9 +56,9 @@ export const EraserModeDrawPanel = (props) => {
     }
   }, [pencilWidth]);
 
-  useEffect(() => {
-    drawBoard.setCursorType(cursorType);
-  }, [cursorType]);
+  // useEffect(() => {
+  //   drawBoard.setCursorType(cursorType);
+  // }, [cursorType]);
 
   const cursorSize = pencilWidth;
   const wrapperStyle = {

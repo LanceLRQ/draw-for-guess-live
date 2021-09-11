@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { List } from 'antd';
-// import T from 'prop-types';
+import T from 'prop-types';
 import {
   List as VList,
   AutoSizer,
@@ -15,13 +15,14 @@ const cellMeasureCache = new CellMeasurerCache({
   minHeight: 50,
 });
 
-export const DanmakuList = () => {
+export const DanmakuList = (props) => {
+  const { mode } = props;
   const containerRef = useRef();
   const danmakuList = useSelector((state) => {
-    return state.danmaku.history;
+    return mode === 'round' ? state.danmaku.current : state.danmaku.history;
   });
   useEffect(() => {
-    if (containerRef.current) {
+    if (containerRef.current && mode === 'global') {
       const list = document.getElementsByClassName('ant-list')[0];
       containerRef.current.scrollTop = list.clientHeight + 10000;
     }
@@ -62,23 +63,36 @@ export const DanmakuList = () => {
       width={width}
     />
   );
-  return <div className="danmaku-list" ref={containerRef}>
-    <List
-      size="small"
-    >
-      <WindowScroller scrollElement={containerRef.current}>
-        {({ height, scrollTop }) => {
-          return (
-            <AutoSizer disableHeight>
-              {({ width }) => vList({
-                height,
-                scrollTop,
-                width,
-              })}
-            </AutoSizer>
-          );
-        }}
-      </WindowScroller>
-    </List>
+  return <div className="danmaku-layout">
+    <div className="danmaku-list" ref={containerRef}>
+      <List
+        size="small"
+      >
+        <WindowScroller scrollElement={containerRef.current}>
+          {({ height, scrollTop }) => {
+            return (
+              <AutoSizer disableHeight>
+                {({ width }) => vList({
+                  height,
+                  scrollTop,
+                  width,
+                })}
+              </AutoSizer>
+            );
+          }}
+        </WindowScroller>
+      </List>
+    </div>
+    {mode === 'round' && <div className="answer-list">
+      hh
+    </div>}
   </div>;
+};
+
+DanmakuList.propTypes = {
+  mode: T.string,
+};
+
+DanmakuList.defaultProps = {
+  mode: 'global',
 };

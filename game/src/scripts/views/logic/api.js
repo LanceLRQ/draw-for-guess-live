@@ -34,5 +34,21 @@ export const API = {
       });
       return res.result;
     },
+    deleteRiddle: async (data) => {
+      const res = await RawAPIClient({
+        url: '/dashboard/riddle/del',
+        method: 'post',
+        data,
+      });
+      return res.result;
+    },
+    changeCurrentRiddle: async (data) => {
+      const res = await RawAPIClient({
+        url: '/dashboard/game/change_riddle',
+        method: 'post',
+        data,
+      });
+      return res.result;
+    },
   },
 };

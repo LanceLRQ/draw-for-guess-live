@@ -1,7 +1,7 @@
 import { noop } from 'lodash';
 import NeffosJS from 'neffos.js';
 import store from '@/scripts/store/index';
-import { pushDanmaku } from '@/scripts/store/sagas';
+import { pushDanmaku, pushDanmakuCurrent, updateGameStatus } from '@/scripts/store/sagas';
 
 export class GameClient {
   server = null;
@@ -13,6 +13,8 @@ export class GameClient {
   handleClearAction = noop;
 
   handleUndoAction = noop;
+
+  handleChangeAction = noop; // 切换图片
 
   async Connect(url) {
     try {
@@ -37,9 +39,15 @@ export class GameClient {
           undo: (nsConn, msg) => {
             this.handleUndoAction(msg.Body, msg);
           },
+          change: (nsConn, msgRaw) => {
+            const msg = JSON.parse(msgRaw.Body);
+            store.dispatch(updateGameStatus(msg));
+            this.handleChangeAction(msgRaw.Body, msgRaw);
+          },
           danmaku: (nsConn, msgRaw) => {
             const msg = JSON.parse(msgRaw.Body);
             store.dispatch(pushDanmaku(msg));
+            store.dispatch(pushDanmakuCurrent(msg));
           },
         },
       }, { // optional.

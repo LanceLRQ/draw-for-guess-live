@@ -5,8 +5,12 @@ import {
   Select, Row, Col, Upload, message, Image, Alert
 } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
-import { InboxOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons';
-import { addRiddle, editRiddle, getRiddleList } from '@/scripts/store/sagas';
+import {
+  InboxOutlined, DeleteOutlined, EditOutlined, ExclamationCircleOutlined
+} from '@ant-design/icons';
+import {
+  addRiddle, deleteRiddle, editRiddle, getRiddleList
+} from '@/scripts/store/sagas';
 import ReactCropper from 'react-cropper';
 
 export const SettingView = () => {
@@ -36,6 +40,8 @@ export const SettingView = () => {
     setEditorMode('add');
     setRiddleType(1);
     setRiddleKeywords('');
+    setRiddleImages('');
+    setRiddleImagesUrl('');
     setIsShowEditDialog(true);
   };
 
@@ -43,7 +49,8 @@ export const SettingView = () => {
     setEditorMode('edit');
     setRiddleType(item.type);
     setRiddleKeywords(item.keywords.join(','));
-    setRiddleImages(item.image);
+    setRiddleImages('');
+    setRiddleImagesUrl(item.image);
     setRiddleId(item.id);
     setIsShowEditDialog(true);
   };
@@ -121,6 +128,32 @@ export const SettingView = () => {
     }
   };
 
+  const handleDeleteRiddle = (id) => {
+    Modal.confirm({
+      title: '确定要删除这个题目吗?',
+      icon: <ExclamationCircleOutlined />,
+      content: '已裁剪的图片不会被删除',
+      okText: '删除',
+      okType: 'danger',
+      onOk() {
+        dispatch(deleteRiddle({
+          data: { id },
+          onSuccess: () => {
+            message.success('删除成功！');
+            setIsShowEditDialog(false);
+            fetchRiddleList();
+          },
+          onError: (e) => {
+            message.error(e.message);
+          },
+          onCompleted: () => {
+            setRiddleConfirm(false);
+          },
+        }));
+      },
+    });
+  };
+
   const ProcImages = () => {
     // 处理裁剪到的图片
     return new Promise((resolve) =>  {
@@ -178,23 +211,25 @@ export const SettingView = () => {
         <Button key="add" type="primary" onClick={addRiddleDialog}>添加新题目</Button>
       ]}
     />
-    {riddleList.map((item) => <Card
-      key={item.id}
-      style={{ width: 300 }}
-      cover={<img
-        alt="example"
-        src={`//${process.env.API_HOST}/${item.image}?m=${Math.random()}`}
-      />}
-      actions={[
-        <EditOutlined key="edit" onClick={() => editRiddleDialog(item)} />,
-        <DeleteOutlined key="delete" />
-      ]}
-    >
-      <Card.Meta
-        title={item.keywords.join(',')}
-        description={item.type === 1 ? '擦除模式' : '画笔模式'}
-      />
-    </Card>)}
+    <div className="riddle-list-layout">
+      {riddleList.map((item) => <Card
+        key={item.id}
+        style={{ width: 300 }}
+        cover={<img
+          alt="example"
+          src={`//${process.env.API_HOST}/${item.image}?m=${item.update_time}`}
+        />}
+        actions={[
+          <EditOutlined key="edit" onClick={() => editRiddleDialog(item)} />,
+          <DeleteOutlined key="delete" onClick={() => handleDeleteRiddle(item.id)} />
+        ]}
+      >
+        <Card.Meta
+          title={item.keywords.join(',')}
+          description={item.type === 1 ? '擦除模式' : '画笔模式'}
+        />
+      </Card>)}
+    </div>
     
     <Modal
       title={editorMode === 'add' ? '新增题目' : '编辑题目'}

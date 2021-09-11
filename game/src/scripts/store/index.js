@@ -4,7 +4,7 @@ import { rootSaga } from './sagas';
 
 // 创建Saga中间件
 const sagaMiddleware = createSagaMiddleware({
-  onError: (error) => {
+  onError: () => {
     // 当Saga出现错误的时候，可以在这里处理错误信息
   },
 });

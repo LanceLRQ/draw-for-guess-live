@@ -1,1 +1,1 @@
-export { LiveBoardView } from './board';
+export { RootView as LiveBoardView } from './root';

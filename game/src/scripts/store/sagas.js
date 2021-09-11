@@ -13,6 +13,9 @@ export const {
   saveRiddleList,
   addRiddle,
   editRiddle,
+  deleteRiddle,
+  changeCurrentRiddle,
+  updateGameStatus,
 } = createActions({
   PUSH_DANMAKU: (payloads) => payloads,
   PUSH_DANMAKU_CURRENT: (payloads) => payloads,
@@ -23,12 +26,15 @@ export const {
   SAVE_RIDDLE_LIST: (payloads) => payloads,
   ADD_RIDDLE: (payloads) => payloads,
   EDIT_RIDDLE: (payloads) => payloads,
+  DELETE_RIDDLE: (payloads) => payloads,
+  CHANGE_CURRENT_RIDDLE: (payloads) => payloads,
+  UPDATE_GAME_STATUS: (payloads) => payloads,
 });
 
 function* initGameStatusSaga() {
   try {
     const resp = yield API.Dashboard.GetGameStatus({});
-    yield put(saveCurrentRiddle(pick(resp?.data?.data, ['current_id', 'current_riddle'])));
+    yield put(saveCurrentRiddle(pick(resp?.data?.data, ['current_id', 'current_riddle', 'drawing_history'])));
     yield put(pushDanmakuBatch({
       type: 'current',
       list: resp?.data?.data?.current_danmaku,
@@ -69,9 +75,34 @@ function* editRiddleSaga({ payload }) {
   }
 }
 
+function* deleteRiddleSaga({ payload }) {
+  try {
+    yield API.Dashboard.deleteRiddle(payload.data);
+    payload.onSuccess && payload.onSuccess();
+  } catch (err) {
+    payload.onError && payload.onError(err);
+  } finally {
+    payload.onCompleted && payload.onCompleted();
+  }
+}
+
+function* changeCurrentRiddleSaga({ payload }) {
+  try {
+    yield API.Dashboard.changeCurrentRiddle(payload.data);
+    // yield put(updateGameStatus(resp?.data?.data));
+    payload.onSuccess && payload.onSuccess();
+  } catch (err) {
+    payload.onError && payload.onError(err);
+  } finally {
+    payload.onCompleted && payload.onCompleted();
+  }
+}
+
 export function* rootSaga() {
   yield takeEvery([initGameStatus], initGameStatusSaga);
   yield takeEvery([getRiddleList], getRiddleListSaga);
   yield takeEvery([addRiddle], addRiddleSaga);
   yield takeEvery([editRiddle], editRiddleSaga);
+  yield takeEvery([deleteRiddle], deleteRiddleSaga);
+  yield takeEvery([changeCurrentRiddle], changeCurrentRiddleSaga);
 }

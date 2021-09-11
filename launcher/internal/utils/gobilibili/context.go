@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"time"
 
 	"github.com/bitly/go-simplejson"
 )
@@ -24,6 +25,7 @@ type DanmuInfo struct {
 	MedalLevel  int    `json:"medal_level"`  //勋章等级
 	MedalName   string `json:"medal_name"`   //勋章名称
 	MedalAnchor string `json:"medal_anchor"` //勋章所属主播
+	ReceiveTime float64 `json:"receive_time"` // 接收时间
 }
 
 //GetDanmuInfo 在Handler中调用，从simplejson.Json中提取弹幕信息
@@ -36,6 +38,7 @@ func (p *Context) GetDanmuInfo() (dInfo DanmuInfo) {
 	dInfo.MedalAnchor, _ = p.Msg.Get("info").GetIndex(3).GetIndex(2).String()
 	dInfo.Level, _ = p.Msg.Get("info").GetIndex(4).GetIndex(0).Int()
 	dInfo.Rank, _ = p.Msg.Get("info").GetIndex(4).GetIndex(2).Int()
+	dInfo.ReceiveTime = float64(time.Now().UnixNano()) / 1e9  // μs
 	return
 }
 

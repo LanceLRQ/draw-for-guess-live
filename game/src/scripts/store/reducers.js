@@ -1,4 +1,3 @@
-import { pick } from 'lodash';
 import { combineReducers } from 'redux';
 import { handleActions } from 'redux-actions';
 
@@ -55,6 +54,14 @@ export const GameStatusReducer = handleActions({
       ...state,
       init: true,
       ...payload,
+    };
+  },
+  UPDATE_GAME_STATUS: (state, { payload = {} }) => {
+    return {
+      ...state,
+      current_id: payload.current_id,
+      current_riddle: payload.current_riddle,
+      drawing_history: [],
     };
   },
 }, {
