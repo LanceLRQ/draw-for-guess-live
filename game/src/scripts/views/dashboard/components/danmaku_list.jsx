@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { List } from 'antd';
+import { List, Tooltip } from 'antd';
 import T from 'prop-types';
 import {
   List as VList,
@@ -8,7 +8,9 @@ import {
   CellMeasurerCache,
   CellMeasurer
 } from 'react-virtualized';
+import dayjs from 'dayjs';
 import { useSelector } from 'react-redux';
+import { AnswerList } from '@/scripts/views/dashboard/components/answer_list';
 
 const cellMeasureCache = new CellMeasurerCache({
   fixedWidth: true,
@@ -42,10 +44,12 @@ export const DanmakuList = (props) => {
       parent={parent}
     >
       <List.Item key={key} style={style}>
-        <div>
-          <strong style={{ color: 'gray' }}>{item?.uname}：</strong>
-          {item.text}
-        </div>
+        <Tooltip title={dayjs(item.receive_time * 1000).format('YYYY-MM-DD HH:mm:ss')}>
+          <div>
+            <strong style={{ color: 'gray' }}>{item?.uname}：</strong>
+            {item.text}
+          </div>
+        </Tooltip>
       </List.Item>
     </CellMeasurer>;
   };
@@ -83,9 +87,7 @@ export const DanmakuList = (props) => {
         </WindowScroller>
       </List>
     </div>
-    {mode === 'round' && <div className="answer-list">
-      hh
-    </div>}
+    {mode === 'round' && <AnswerList />}
   </div>;
 };
 

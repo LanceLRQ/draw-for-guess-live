@@ -23,24 +23,22 @@ export const DanmakuReducer = handleActions({
   // 批量导入弹幕
   PUSH_DANMAKU_BATCH: (state, { payload = {} }) => {
     const rel = [...state[payload.type]];
-    if (payload.type === 'global') {
-      payload?.list.forEach((item) => {
-        rel.push({
-          id: rel.length + 1,
-          ...item,
-        });
+    payload?.list.forEach((item) => {
+      rel.push({
+        id: rel.length + 1,
+        ...item,
       });
-    } else { // current为向前插入
-      payload?.list.forEach((item) => {
-        rel.unshift({
-          id: rel.length + 1,
-          ...item,
-        });
-      });
-    }
+    });
     return {
       ...state,
       [payload.type]: rel,
+    };
+  },
+  // 清空弹幕
+  CLEAR_DANMAKU_BATCH: (state, { payload = {} }) => {
+    return {
+      ...state,
+      [payload.type]: [],
     };
   },
 }, {

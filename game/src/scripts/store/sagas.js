@@ -7,6 +7,7 @@ export const {
   pushDanmaku,
   pushDanmakuCurrent,
   pushDanmakuBatch,
+  clearDanmakuBatch,
   initGameStatus,
   saveCurrentRiddle,
   getRiddleList,
@@ -20,6 +21,7 @@ export const {
   PUSH_DANMAKU: (payloads) => payloads,
   PUSH_DANMAKU_CURRENT: (payloads) => payloads,
   PUSH_DANMAKU_BATCH: (payloads) => payloads,
+  CLEAR_DANMAKU_BATCH: (payloads) => payloads,
   INIT_GAME_STATUS: (payloads) => payloads,
   SAVE_CURRENT_RIDDLE: (payloads) => payloads,
   GET_RIDDLE_LIST: (payloads) => payloads,
@@ -90,6 +92,7 @@ function* changeCurrentRiddleSaga({ payload }) {
   try {
     yield API.Dashboard.changeCurrentRiddle(payload.data);
     // yield put(updateGameStatus(resp?.data?.data));
+    yield put(clearDanmakuBatch({ type: 'current' }));
     payload.onSuccess && payload.onSuccess();
   } catch (err) {
     payload.onError && payload.onError(err);

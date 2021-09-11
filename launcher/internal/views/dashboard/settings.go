@@ -67,7 +67,7 @@ func AddRiddle (ctx iris.Context) {
 	newItem := data.RiddleInfo{
 		Id: server.RiddleListConfig.AtomicId + 1,
 		Type: typeId,
-		Keywords: strings.Split(keywordsText, ","),
+		Keywords: strings.Split(strings.Replace(keywordsText, "，", ",", -1), ","),
 		UpdateTime: int(time.Now().Unix()),
 	}
 
@@ -136,7 +136,7 @@ func EditRiddle (ctx iris.Context) {
 	}
 
 	server.RiddleListConfig.RiddleList[recordIndex].Type = typeId
-	server.RiddleListConfig.RiddleList[recordIndex].Keywords = strings.Split(keywordsText, ",")
+	server.RiddleListConfig.RiddleList[recordIndex].Keywords = strings.Split(strings.Replace(keywordsText, "，", ",", -1), ",")
 	server.RiddleListConfig.RiddleList[recordIndex].UpdateTime = int(time.Now().Unix())
 	err := biz.SaveRiddleList()
 	if err != nil {
