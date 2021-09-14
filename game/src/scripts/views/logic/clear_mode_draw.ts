@@ -26,14 +26,17 @@ export class EraserModeDrawLogic {
   // 光标类型
   cursorType: string = 'pencil';
 
-  // 绘图历史栈
-  historyStack: ImageData[] = [];
+  // 历史命令栈
+  cmdHistoryStack: DrawBoardMessage[] = [];
 
-  // 命令栈
-  commandStack: any[] = [];
+  // 画图操作栈
+  drawStack: any[] = [];
 
   // 监听变更事件
   onChange: Function = noop;
+
+  // 画图监听
+  drawingWatcher: any = null;
 
   constructor(c:HTMLCanvasElement, cursor:HTMLElement) {
     this.canvas = c;
@@ -44,6 +47,7 @@ export class EraserModeDrawLogic {
     this.handleMouseMove = this.handleMouseMove.bind(this);
     this.handleMouseLeave = this.handleMouseLeave.bind(this);
     this.handleMouseUp = this.handleMouseUp.bind(this);
+    this.drawingWatcherFunc = this.drawingWatcherFunc.bind(this);
   }
 
   init() {
@@ -52,21 +56,29 @@ export class EraserModeDrawLogic {
     this.canvas.addEventListener('mouseleave', this.handleMouseLeave);
     this.canvas.addEventListener('mouseup', this.handleMouseUp);
     this.reset()
+    if (!this.drawingWatcher) {
+      clearInterval(this.drawingWatcher);
+    }
+    this.drawingWatcher = setInterval(this.drawingWatcherFunc, 100);
   }
 
-  destory() {
+  destroy() {
     this.canvas.removeEventListener('mousedown', this.handleMouseDown);
     this.canvas.removeEventListener('mousemove', this.handleMouseMove);
     this.canvas.removeEventListener('mouseleave', this.handleMouseLeave);
     this.canvas.removeEventListener('mouseup', this.handleMouseUp);
+    if (!this.drawingWatcher) {
+      clearInterval(this.drawingWatcher);
+    }
+    this.drawingWatcher = null;
   }
 
-  command(msg:DrawBoardMessage) {
+  command(msg:DrawBoardMessage, inline = false) {
     try {
       switch (msg.action) {
         case 'pencil':
         {
-          this.historyStack.push(this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height));
+          // this.cmdHistoryStack.push(this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height));
           const params:DrawBoardPencilAction = <DrawBoardPencilAction>msg.params;
           this.ctx.globalCompositeOperation = "destination-out";
           this.ctx.strokeStyle = '#FFF';
@@ -75,16 +87,25 @@ export class EraserModeDrawLogic {
           this.ctx.lineJoin = 'round';
           this.ctx.beginPath();
           params.points.forEach((point:DrawBoardPoint) => {
-            if (point.a === 1) { // lineTo
-              this.ctx.lineTo(point.x, point.y);
-              this.ctx.stroke();
-            } else {
-              this.ctx.moveTo(point.x, point.y);
+            switch (point.a) {
+              case 1: /// lineTo:
+                this.ctx.lineTo(point.x, point.y);
+                this.ctx.stroke();
+                break;
+              case 0:
+                this.ctx.moveTo(point.x, point.y);
+                break;
+              default:
+                break;
             }
           });
           this.ctx.closePath();
+          !inline && this.cmdHistoryStack.push(msg);
           break;
         }
+        case 'draw_end':
+          !inline && this.cmdHistoryStack.push(msg);
+          break;
         case 'reset':
           this.reset();
           break;
@@ -101,23 +122,36 @@ export class EraserModeDrawLogic {
   }
 
   undo() {
-    if (this.historyStack.length > 0) {
-      this.ctx.putImageData(this.historyStack.pop(), 0, 0);
-    }
+    // if (this.cmdHistoryStack.length > 0) {
+    //   this.ctx.putImageData(this.cmdHistoryStack.pop(), 0, 0);
+    // }
+    let cmd: DrawBoardMessage = null;
+    do {
+      cmd = this.cmdHistoryStack.pop();
+    } while (cmd && cmd.action != 'draw_end');
+    this.resetSketch();
+    this.cmdHistoryStack.forEach(cmd => {
+      this.command(cmd, true);
+    })
   }
 
-  reset() {
-    this.historyStack = [];
+  resetSketch() {
     this.ctx.globalCompositeOperation = "destination-over";
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
     if (!this.readonly) {
-      this.ctx.globalAlpha = 0.5;
+      this.ctx.globalAlpha = 0.7;
     }
 
     this.ctx.fillStyle = '#000';
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
     this.ctx.globalAlpha = 1;
+  }
+
+  reset() {
+    this.cmdHistoryStack = [];
+    this.drawStack = [];
+    this.resetSketch();
   }
 
 
@@ -131,8 +165,12 @@ export class EraserModeDrawLogic {
 
   handleMouseDown(ev:MouseEvent) {
     if (this.readonly) return;
-    // 把图像数据写入到栈上
-    this.historyStack.push(this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height));
+    // 设置分割线
+    const cmd = new DrawBoardMessage(
+        'draw_end', null
+    );
+    this.cmdHistoryStack.push(cmd);
+    this.onChange(cmd);
     // 启动画图
     this.drawing = true;
     this.ctx.beginPath();
@@ -142,14 +180,15 @@ export class EraserModeDrawLogic {
     this.ctx.lineCap = 'round';
     this.ctx.lineJoin = 'round';
     this.ctx.moveTo(ev.offsetX, ev.offsetY);
-    this.commandStack.push(new DrawBoardPoint(0, ev.offsetX, ev.offsetY));
+    this.drawStack.push(new DrawBoardPoint(0, ev.offsetX, ev.offsetY));
+
   }
 
   handleMouseMove(ev:MouseEvent) {
     if (this.drawing) {
       this.ctx.lineTo(ev.offsetX, ev.offsetY);
       this.ctx.stroke();
-      this.commandStack.push(new DrawBoardPoint(1, ev.offsetX, ev.offsetY));
+      this.drawStack.push(new DrawBoardPoint(1, ev.offsetX, ev.offsetY));
     }
     this.cursorEl.style.display = 'block';
     this.cursorEl.style.left = `${this.canvas.offsetLeft + ev.offsetX - (this.pencilWidth / 2)}px`;
@@ -167,17 +206,29 @@ export class EraserModeDrawLogic {
     this.closeDrawing();
   }
 
+  drawingWatcherFunc() {
+    if (this.drawStack.length > 1) {
+      const cmd = new DrawBoardMessage(
+          'pencil',
+          new DrawBoardPencilAction( this.pencilShape, this.pencilWidth, [...this.drawStack])
+      );
+      // 推入命令栈
+      this.cmdHistoryStack.push(cmd);
+      this.onChange(cmd);
+    }
+  }
+
   closeDrawing() {
     if (this.drawing) {
       this.ctx.closePath();
       this.drawing = false;
-      if (this.commandStack.length > 1) {
-        this.onChange(new DrawBoardMessage(
-          'pencil',
-          new DrawBoardPencilAction( this.pencilShape, this.pencilWidth, [...this.commandStack]))
-        );
-      }
-      this.commandStack = [];
+      // if (this.drawStack.length > 1) {
+      //   this.onChange(new DrawBoardMessage(
+      //     'pencil',
+      //     new DrawBoardPencilAction( this.pencilShape, this.pencilWidth, [...this.drawStack]))
+      //   );
+      // }
+      this.drawStack = [];
     }
   }
 }

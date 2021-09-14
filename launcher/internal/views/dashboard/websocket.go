@@ -12,28 +12,39 @@ import (
 )
 
 
-
-func redirectOnlyHandler(actionType string) func (c *neffos.NSConn, msg neffos.Message) error {
-	return func(c *neffos.NSConn, msg neffos.Message) error {
-		if !c.Conn.IsClient() {
-			c.Conn.Server().Broadcast(c, msg)
-		}
-		server.GameStatus.DrawingHistory = append(server.GameStatus.DrawingHistory, data.DrawingOperation{
-			Type: actionType,
-			Msg: string(msg.Body),
-		})
-		return nil
-	}
-}
-
 func newGameWebsocketView() *neffos.Server {
 	server.DrawingWebSocketServer = websocket.New(neffosGorilla.Upgrader(gorilla.Upgrader{
 		CheckOrigin: func(r *http.Request) bool { return true },
 	}), websocket.Namespaces{
 		"drawing": neffos.Events{
-			"draw": redirectOnlyHandler("draw"),
-			"clear": redirectOnlyHandler("clear"),
-			"undo": redirectOnlyHandler("undo"),
+			"draw": func(c *neffos.NSConn, msg neffos.Message) error {
+				if !c.Conn.IsClient() {
+					c.Conn.Server().Broadcast(c, msg)
+				}
+				server.GameStatus.DrawingHistory = append(server.GameStatus.DrawingHistory, data.DrawingOperation{
+					Type: "draw",
+					Msg: string(msg.Body),
+				})
+				return nil
+			},
+			"clear": func(c *neffos.NSConn, msg neffos.Message) error {
+				if !c.Conn.IsClient() {
+					c.Conn.Server().Broadcast(c, msg)
+				}
+				// clean history
+				server.GameStatus.DrawingHistory = []data.DrawingOperation{}
+				return nil
+			},
+			"undo": func(c *neffos.NSConn, msg neffos.Message) error {
+				if !c.Conn.IsClient() {
+					c.Conn.Server().Broadcast(c, msg)
+				}
+				server.GameStatus.DrawingHistory = append(server.GameStatus.DrawingHistory, data.DrawingOperation{
+					Type: "undo",
+					Msg: string(msg.Body),
+				})
+				return nil
+			},
 			"_OnRoomJoin": func(conn *neffos.NSConn, message neffos.Message) error {
 				return nil
 			},

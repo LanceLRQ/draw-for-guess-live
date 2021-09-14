@@ -4,4 +4,4 @@ server:
   store: ./store
 
 bilibili:
-  room_id: 21652717
+  room_id: 102

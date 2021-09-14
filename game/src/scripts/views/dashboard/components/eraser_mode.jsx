@@ -43,7 +43,7 @@ export const EraserModeDrawPanel = (props) => {
     }
     return () => {
       if (drawBoard) {
-        drawBoard.destory();
+        drawBoard.destroy();
         drawBoard = null;
         onDestroy();
       }

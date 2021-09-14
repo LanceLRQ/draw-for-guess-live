@@ -1,5 +1,5 @@
 export class DrawBoardPoint {
-  a: number = 0;
+  a: number = 0;   // 0 - moveTo; 1 - lineTo; 99 - action_divider
 
   x: number = 0;
 
