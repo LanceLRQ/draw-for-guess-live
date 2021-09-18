@@ -24,6 +24,7 @@ export const AnswerList = () => {
   });
   return <div className="answer-list">
     <List
+
       itemLayout="horizontal"
       dataSource={danmakuRankList}
       renderItem={(item, index) => <List.Item>

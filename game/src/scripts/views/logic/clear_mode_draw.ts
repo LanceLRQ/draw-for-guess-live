@@ -2,6 +2,7 @@ import { noop } from 'lodash';
 import { DrawBoardPoint } from './structs/points';
 import { DrawBoardMessage } from './structs/message';
 import { DrawBoardPencilAction } from './structs/actions';
+import {debug} from "webpack";
 
 export class EraserModeDrawLogic {
   // canvas dom
@@ -80,26 +81,30 @@ export class EraserModeDrawLogic {
         {
           // this.cmdHistoryStack.push(this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height));
           const params:DrawBoardPencilAction = <DrawBoardPencilAction>msg.params;
-          this.ctx.globalCompositeOperation = "destination-out";
-          this.ctx.strokeStyle = '#FFF';
-          this.ctx.lineWidth = params.width;
-          this.ctx.lineCap = 'round';
-          this.ctx.lineJoin = 'round';
-          this.ctx.beginPath();
           params.points.forEach((point:DrawBoardPoint) => {
             switch (point.a) {
-              case 1: /// lineTo:
+              case 0: // beginPath
+                this.ctx.globalCompositeOperation = "destination-out";
+                this.ctx.strokeStyle = '#FFF';
+                this.ctx.lineWidth = params.width;
+                this.ctx.lineCap = 'round';
+                this.ctx.lineJoin = 'round';
+                this.ctx.beginPath();
+                break;
+              case 1: // closePath
+                this.ctx.closePath();
+                break;
+              case 2: /// lineTo:
                 this.ctx.lineTo(point.x, point.y);
                 this.ctx.stroke();
                 break;
-              case 0:
+              case 3:  // moveTo
                 this.ctx.moveTo(point.x, point.y);
                 break;
               default:
                 break;
             }
           });
-          this.ctx.closePath();
           !inline && this.cmdHistoryStack.push(msg);
           break;
         }
@@ -165,6 +170,7 @@ export class EraserModeDrawLogic {
 
   handleMouseDown(ev:MouseEvent) {
     if (this.readonly) return;
+    this.drawingWatcherFunc();
     // 设置分割线
     const cmd = new DrawBoardMessage(
         'draw_end', null
@@ -180,15 +186,15 @@ export class EraserModeDrawLogic {
     this.ctx.lineCap = 'round';
     this.ctx.lineJoin = 'round';
     this.ctx.moveTo(ev.offsetX, ev.offsetY);
-    this.drawStack.push(new DrawBoardPoint(0, ev.offsetX, ev.offsetY));
-
+    this.drawStack.push(new DrawBoardPoint(0, -1, -1));
+    this.drawStack.push(new DrawBoardPoint(3, ev.offsetX, ev.offsetY));
   }
 
   handleMouseMove(ev:MouseEvent) {
     if (this.drawing) {
       this.ctx.lineTo(ev.offsetX, ev.offsetY);
       this.ctx.stroke();
-      this.drawStack.push(new DrawBoardPoint(1, ev.offsetX, ev.offsetY));
+      this.drawStack.push(new DrawBoardPoint(2, ev.offsetX, ev.offsetY));
     }
     this.cursorEl.style.display = 'block';
     this.cursorEl.style.left = `${this.canvas.offsetLeft + ev.offsetX - (this.pencilWidth / 2)}px`;
@@ -207,11 +213,12 @@ export class EraserModeDrawLogic {
   }
 
   drawingWatcherFunc() {
-    if (this.drawStack.length > 1) {
+    if (this.drawStack.length > 0) {
       const cmd = new DrawBoardMessage(
           'pencil',
           new DrawBoardPencilAction( this.pencilShape, this.pencilWidth, [...this.drawStack])
       );
+      this.drawStack = [];
       // 推入命令栈
       this.cmdHistoryStack.push(cmd);
       this.onChange(cmd);
@@ -220,6 +227,7 @@ export class EraserModeDrawLogic {
 
   closeDrawing() {
     if (this.drawing) {
+      this.drawStack.push(new DrawBoardPoint(1, -1, -1));
       this.ctx.closePath();
       this.drawing = false;
       // if (this.drawStack.length > 1) {
@@ -228,7 +236,7 @@ export class EraserModeDrawLogic {
       //     new DrawBoardPencilAction( this.pencilShape, this.pencilWidth, [...this.drawStack]))
       //   );
       // }
-      this.drawStack = [];
+      // this.drawStack = [];
     }
   }
 }
