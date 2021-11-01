@@ -1,0 +1,36 @@
+version: "2"
+services:
+
+  mariadb:
+    image: mariadb:10.5
+    container_name: dag-mariadb
+    volumes:
+      - ./storages/mysql:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=12345678
+    restart: always
+
+  pma:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: dag-pma
+    depends_on:
+      - mariadb
+    links:
+      - mariadb:db
+    ports:
+      - "8088:80"
+    restart: always
+
+  redis:
+    image: redis:6.2
+    container_name: dag-redis
+    volumes:
+      - ./storages/redis:/data
+      - ./configs/redis.conf:/etc/redis.conf
+    ports:
+      - "6379:6379"
+    command: redis-server /etc/redis.conf
+    restart: always
+  
