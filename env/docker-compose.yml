@@ -3,7 +3,7 @@ services:
 
   mariadb:
     image: mariadb:10.5
-    container_name: dag-mariadb
+    container_name: sikong-mariadb
     volumes:
       - ./storages/mysql:/var/lib/mysql
     ports:
@@ -14,7 +14,7 @@ services:
 
   pma:
     image: phpmyadmin/phpmyadmin:latest
-    container_name: dag-pma
+    container_name: sikong-pma
     depends_on:
       - mariadb
     links:
@@ -25,7 +25,7 @@ services:
 
   redis:
     image: redis:6.2
-    container_name: dag-redis
+    container_name: sikong-redis
     volumes:
       - ./storages/redis:/data
       - ./configs/redis.conf:/etc/redis.conf
