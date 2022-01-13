@@ -4,13 +4,12 @@ import (
 	gorilla "github.com/gorilla/websocket"
 	"github.com/kataras/iris/v12/websocket"
 	"github.com/kataras/neffos"
-	neffosGorilla "github.com/kataras/neffos/gorilla"
+	neffosGorilla "github.com/katarags/neffos/gorilla"
 	"launcher/internal/data"
 	"launcher/internal/server"
 	"log"
 	"net/http"
 )
-
 
 func newGameWebsocketView() *neffos.Server {
 	server.DrawingWebSocketServer = websocket.New(neffosGorilla.Upgrader(gorilla.Upgrader{
@@ -23,7 +22,7 @@ func newGameWebsocketView() *neffos.Server {
 				}
 				server.GameStatus.DrawingHistory = append(server.GameStatus.DrawingHistory, data.DrawingOperation{
 					Type: "draw",
-					Msg: string(msg.Body),
+					Msg:  string(msg.Body),
 				})
 				return nil
 			},
@@ -41,7 +40,7 @@ func newGameWebsocketView() *neffos.Server {
 				}
 				server.GameStatus.DrawingHistory = append(server.GameStatus.DrawingHistory, data.DrawingOperation{
 					Type: "undo",
-					Msg: string(msg.Body),
+					Msg:  string(msg.Body),
 				})
 				return nil
 			},
@@ -71,4 +70,4 @@ func newGameWebsocketView() *neffos.Server {
 			return nil
 		},
 	}
- */
+*/
